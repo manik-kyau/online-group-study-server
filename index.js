@@ -35,16 +35,10 @@ async function run() {
     })
 
     // Update Operation
-    app.get('/assignments/:id',async(req,res)=>{
+    app.get('/assignment/:id',async(req,res)=>{
         const id = req.params.id;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
-        const updateDoc = {
-            $set: {
-              
-            },
-        };
-        const result = await assignmentCollection.updateOne(filter, updateDoc, options);
+        const query = { _id: new ObjectId(id) };
+        const result = await assignmentCollection.findOne(query);
         res.send(result);
     })
 
