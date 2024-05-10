@@ -34,6 +34,20 @@ async function run() {
         res.send(result)
     })
 
+    // Update Operation
+    app.get('/assignments/:id',async(req,res)=>{
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+            $set: {
+              
+            },
+        };
+        const result = await assignmentCollection.updateOne(filter, updateDoc, options);
+        res.send(result);
+    })
+
     app.post('/assignments',async(req,res)=>{
         const newAssignment = req.body;
         console.log(newAssignment);
