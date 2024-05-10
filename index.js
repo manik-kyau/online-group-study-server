@@ -28,6 +28,13 @@ async function run() {
 
     const assignmentCollection = client.db("onlinegroupstudyDB").collection("assignments");
 
+    app.post('/assignments',async(req,res)=>{
+        const newAssignment = req.body;
+        console.log(newAssignment);
+        const result = await assignmentCollection.insertOne(newAssignment);
+        res.send(result);
+    })
+
     app.get('/assignments',async(req,res)=>{
         const cursor = assignmentCollection.find();
         const result = await cursor.toArray();
