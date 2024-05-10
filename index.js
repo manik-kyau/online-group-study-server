@@ -28,33 +28,52 @@ async function run() {
 
     const assignmentCollection = client.db("onlinegroupstudyDB").collection("assignments");
 
-    app.get('/assignments',async(req,res)=>{
-        const cursor = assignmentCollection.find();
-        const result = await cursor.toArray();
-        res.send(result)
+    app.get('/assignments', async (req, res) => {
+      const cursor = assignmentCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
     })
 
     // Update Operation
-    app.get('/assignment/:id',async(req,res)=>{
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) };
-        const result = await assignmentCollection.findOne(query);
-        res.send(result);
+    app.get('/assignment/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await assignmentCollection.findOne(query);
+      res.send(result);
     })
 
-    app.post('/assignments',async(req,res)=>{
-        const newAssignment = req.body;
-        console.log(newAssignment);
-        const result = await assignmentCollection.insertOne(newAssignment);
-        res.send(result);
+    app.put('/assignment/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedAssignment = req.body;
+      const assignment = {
+        $set: {
+          title: updatedAssignment.title,
+          description: updatedAssignment.description,
+          marks: updatedAssignment.marks,
+          imageURL: updatedAssignment.imageURL,
+          difficultyLevel: updatedAssignment.difficultyLevel,
+          date: updatedAssignment.date,
+        },
+      };
+      const result = await assignmentCollection.updateOne(filter, assignment, options);
+      res.send(result);
+    })
+
+    app.post('/assignments', async (req, res) => {
+      const newAssignment = req.body;
+      console.log(newAssignment);
+      const result = await assignmentCollection.insertOne(newAssignment);
+      res.send(result);
     })
 
     // delete operation
-    app.delete('/assignments/:id',async(req,res)=>{
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) };
-        const result = await assignmentCollection.deleteOne(query);
-        res.send(result);
+    app.delete('/assignments/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await assignmentCollection.deleteOne(query);
+      res.send(result);
     })
 
 
@@ -70,9 +89,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Online Group Study Server is Running.');
+  res.send('Online Group Study Server is Running.');
 })
 
 app.listen(port, () => {
-    console.log(`Online Group Study Server Running on port ${port}`);
+  console.log(`Online Group Study Server Running on port ${port}`);
 })
