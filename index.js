@@ -27,13 +27,14 @@ async function run() {
     // await client.connect();
 
     const assignmentCollection = client.db("onlinegroupstudyDB").collection("assignments");
+    const submitCollection = client.db("onlinegroupstudyDB").collection("submitassignments");
 
     app.get('/assignments', async (req, res) => {
       const cursor = assignmentCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
-
+    // -------
     // Update Operation
     app.get('/assignment/:id', async (req, res) => {
       const id = req.params.id;
@@ -68,11 +69,26 @@ async function run() {
       res.send(result);
     })
 
+
     // delete operation
     app.delete('/assignments/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await assignmentCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    app.get('/assignments/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await assignmentCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.post('/submits', async(req, res) => {
+      const subAssignment = req.body;
+      console.log(subAssignment);
+      const result = await submitCollection.insertOne(subAssignment);
       res.send(result);
     })
 
