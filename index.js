@@ -85,7 +85,53 @@ async function run() {
       res.send(result);
     })
 
-    app.post('/submits', async(req, res) => {
+    app.get('/submits', async (req, res) => {
+      const result = await submitCollection.find().toArray();
+      res.send(result)
+    })
+
+    // Update Operation
+    app.get('/submits/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await submitCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.put('/submits/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedSubmit = req.body;
+      const assignmentSubmit = {
+        $set: {
+          title: updatedSubmit.title,
+          pdf: updatedSubmit.pdf,
+          marks: updatedSubmit.marks,
+          email: updatedSubmit.email,
+          message: updatedSubmit.message,
+          studentName: updatedSubmit.studentName,
+          assignment_id: updatedSubmit.assignment_id,
+          givemark: updatedSubmit.givemark,
+          feedback: updatedSubmit.feedback,
+        },
+      };
+      const result = await submitCollection.updateOne(filter, assignmentSubmit, options);
+      res.send(result);
+    })
+
+    // spoecifiq student submited assignment
+    app.get('/submits', async (req, res) => {
+      console.log(req.query.email);
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email }
+      }
+      const result = await submitCollection.find(query).toArray();
+      res.send(result)
+    })
+
+    app.post('/submits', async (req, res) => {
       const subAssignment = req.body;
       console.log(subAssignment);
       const result = await submitCollection.insertOne(subAssignment);
