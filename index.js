@@ -28,6 +28,7 @@ async function run() {
 
     const assignmentCollection = client.db("onlinegroupstudyDB").collection("assignments");
     const submitCollection = client.db("onlinegroupstudyDB").collection("submitassignments");
+    const userCollection = client.db("onlinegroupstudyDB").collection("users");
 
     app.get('/assignments', async (req, res) => {
       const cursor = assignmentCollection.find();
@@ -121,7 +122,7 @@ async function run() {
     })
 
     // spoecifiq student submited assignment
-    app.get('/submits', async (req, res) => {
+    app.get('/submits/:email', async (req, res) => {
       console.log(req.query.email);
       let query = {};
       if (req.query?.email) {
@@ -135,6 +136,14 @@ async function run() {
       const subAssignment = req.body;
       console.log(subAssignment);
       const result = await submitCollection.insertOne(subAssignment);
+      res.send(result);
+    })
+
+    // create user
+    app.post('/users',async(req,res)=>{
+      const user = req.body;
+      console.log(user);
+      const result = await userCollection.insertOne(user);
       res.send(result);
     })
 
