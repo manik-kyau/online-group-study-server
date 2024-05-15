@@ -71,7 +71,7 @@ async function run() {
     app.post('/jwt', async (req, res) => {
       const user = req.body
       console.log('user for token', user);
-      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '16' })
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20s' })
 
       res.cookie('token', token, {
         httpOnly: true,
@@ -151,11 +151,7 @@ async function run() {
       res.send(result);
     })
 
-    app.get('/submits', async (req, res) => {
-      // console.log('token owner info: ', req.user);
-      // if(req.user.email !== req.query.email){
-      //   return res.status(403).send({message: 'forbidden access'})
-      // }
+    app.get('/submition',logger, verifyToken, async (req, res) => {
       const result = await submitCollection.find().toArray();
       res.send(result)
     })
@@ -190,10 +186,12 @@ async function run() {
       res.send(result);
     })
 
-    // spoecifiq student submited assignment
-    app.get('/submits/:email',logger,verifyToken, async (req, res) => {
-      console.log('submit token: ', req.query.email);
-      console.log('cook cookies--2: ',req.cookies);
+    // specifiq student submited assignment
+    app.get('/submits',logger,verifyToken, async (req, res) => {
+      console.log('token owner info: ', req.user);
+      if(req.user.email !== req.query.email){
+        return res.status(403).send({message: 'forbidden access'})
+      }
       let query = {};
       if (req.query?.email) {
         query = { email: req.query.email }
