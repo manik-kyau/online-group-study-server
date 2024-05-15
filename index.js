@@ -71,7 +71,7 @@ async function run() {
     app.post('/jwt', async (req, res) => {
       const user = req.body
       console.log('user for token', user);
-      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20s' })
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
       res.cookie('token', token, {
         httpOnly: true,
@@ -100,7 +100,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
-    // -------
+
     // Update Operation
     app.get('/assignment/:id', async (req, res) => {
       const id = req.params.id;
