@@ -10,8 +10,9 @@ const port = process.env.PORT || 5000;
 // middle ware
 app.use(cors({
   origin: [
-    'https://online-group-study-7e47f.web.app',
-    'https://online-group-study-7e47f.firebaseapp.com',
+    'http://localhost:5173', 'http://localhost:5174',
+    // 'https://online-group-study-7e47f.web.app',
+    // 'https://online-group-study-7e47f.firebaseapp.com',
   ],
   credentials: true,
 }));
@@ -97,7 +98,12 @@ async function run() {
     })
     // assignments related api
     app.get('/assignments', async (req, res) => {
-      const cursor = assignmentCollection.find();
+      const filter = req.query;
+      console.log(filter);
+      const query = {
+        title: {$regex: filter.search, $options: 'i'}
+      }
+      const cursor = assignmentCollection.find(query);
       const result = await cursor.toArray();
       res.send(result)
     })
